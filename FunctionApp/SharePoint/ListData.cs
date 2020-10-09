@@ -37,11 +37,15 @@ namespace Plumsail.DataSource.SharePoint
 
             var graph = _graphProvider.Create();
             var list = await graph.GetListAsync(_settings.SiteUrl, _settings.ListName);
+            string token = req.Query["n"];
 
             var queryOptions = new List<QueryOption>()
             {
                 new QueryOption("select", "id"),
-                new QueryOption("expand", "fields(select=Title,Author)")
+                new QueryOption("expand", "fields(select=Title,Description,Reimbursement_x0020_Amount,Token)"),
+                new QueryOption("filter", $"startswith(fields/Token, '{token}')")
+                //new QueryOption("filter", "fields/Token/any(a:a+eq+'63d8c29f-3c41-47a3-a282-3d66fe8668b6')")
+                //new QueryOption("filter", "fields/Token eq '63d8c29f-3c41-47a3-a282-3d66fe8668b6')")
             };
             var itemsPage = await list.Items
                 .Request(queryOptions)
